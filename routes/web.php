@@ -14,4 +14,5 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/pengeluaran', [BazarController::class, 'index']);
+Route::get('/bazar', [BazarController::class, 'index']);
+Route::post('/bazar/create', [BazarController::class, 'store']);
