@@ -155,7 +155,14 @@
 
                         tableBody += "</tr>";
                     });
-                    $("#dataTable tbody").html(tableBody);
+                    $('#dataTable').DataTable().destroy();
+                    $("#dataTable tbody").empty();
+                    $("#dataTable tbody").append(tableBody);
+                    $('#dataTable').DataTable({
+                        "paging": true,
+                        "ordering": true,
+                        "searching": true
+                    });
                 },
                 error: function() {
                     console.log("Failed to get data from server");
@@ -217,58 +224,58 @@
             });
         });
 
-        //edit
+        // //edit
 
-        $(document).on('click', '.edit-modal', function() {
-            $('#id').val($(this).data('id'));
-            $('#nama_menu').val($(this).data('nama_menu'));
-            $('#harga').val($(this).data('harga'));
-            $('#gambar').val($(this).data('gambar'));
-            $('#description').val($(this).data('description'));
-            $('#EditModal').val($(this).data('show'));
-        })
+        // $(document).on('click', '.edit-modal', function() {
+        //     $('#id').val($(this).data('id'));
+        //     $('#nama_menu').val($(this).data('nama_menu'));
+        //     $('#harga').val($(this).data('harga'));
+        //     $('#gambar').val($(this).data('gambar'));
+        //     $('#description').val($(this).data('description'));
+        //     $('#EditModal').val($(this).data('show'));
+        // })
 
 
-        $(document).on('click', '.delete-confirm', function(event) {
-            event.preventDefault();
-            var id = $(this).data('id');
-            var row = $(this).closest('tr');
+        // $(document).on('click', '.delete-confirm', function(event) {
+        //     event.preventDefault();
+        //     var id = $(this).data('id');
+        //     var row = $(this).closest('tr');
 
-            Swal.fire({
-                title: 'Apakah Anda yakin ingin menghapus data ini?',
-                text: "Data yang sudah dihapus tidak dapat dikembalikan!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6',
-                confirmButtonText: 'Ya, hapus!',
-                cancelButtonText: 'Batal'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    $.ajax({
-                        url: "{{ url('bazar/delete/') }}/" + id,
-                        method: "DELETE",
-                        data: {
-                            _token: '{{ csrf_token() }}'
-                        },
-                        dataType: "json",
-                        success: function(response) {
-                            console.log(response);
-                            if (response.success) {
-                                row.remove();
-                                Swal.fire(
-                                    'Terhapus!',
-                                    'Data sudah dihapus.',
-                                    'success'
-                                );
-                            }
-                        },
-                        error: function() {
-                            console.log("Failed to delete data from server");
-                        }
-                    });
-                }
-            });
-        });
+        //     Swal.fire({
+        //         title: 'Apakah Anda yakin ingin menghapus data ini?',
+        //         text: "Data yang sudah dihapus tidak dapat dikembalikan!",
+        //         icon: 'warning',
+        //         showCancelButton: true,
+        //         confirmButtonColor: '#d33',
+        //         cancelButtonColor: '#3085d6',
+        //         confirmButtonText: 'Ya, hapus!',
+        //         cancelButtonText: 'Batal'
+        //     }).then((result) => {
+        //         if (result.isConfirmed) {
+        //             $.ajax({
+        //                 url: "{{ url('bazar/delete/') }}/" + id,
+        //                 method: "DELETE",
+        //                 data: {
+        //                     _token: '{{ csrf_token() }}'
+        //                 },
+        //                 dataType: "json",
+        //                 success: function(response) {
+        //                     console.log(response);
+        //                     if (response.success) {
+        //                         row.remove();
+        //                         Swal.fire(
+        //                             'Terhapus!',
+        //                             'Data sudah dihapus.',
+        //                             'success'
+        //                         );
+        //                     }
+        //                 },
+        //                 error: function() {
+        //                     console.log("Failed to delete data from server");
+        //                 }
+        //             });
+        //         }
+        //     });
+        // });
     </script>
 @endsection
