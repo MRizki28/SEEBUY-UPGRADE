@@ -80,7 +80,7 @@ class BazarController extends Controller
         ], Response::HTTP_OK);
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'nama_menu' => 'required',
