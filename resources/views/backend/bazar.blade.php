@@ -81,7 +81,7 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="EditModalLabel">Edit Data</h5>
+                    <h5 class="modal-title" id="EditModalLabel">Edit Menu Bazar</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -93,32 +93,38 @@
                         <input type="hidden" name="id" id="id">
                         <div class="form-group">
                             <label for="nama_menu">Nama Menu</label>
-                            <input type="text" class="form-control" name="nama_menu" id="enama_menu"
+                            <input type="text" class="form-control" id="enama_menu" name="nama_menu"
                                 placeholder="Input Here..">
                         </div>
                         <div class="form-group">
                             <label for="harga">Harga</label>
-                            <input type="number" class="form-control" name="harga" id="eharga"
+                            <input type="number" class="form-control" id="eharga" name="harga"
                                 placeholder="Input Here">
                         </div>
                         <div class="form-group">
                             <label for="gambar">Gambar</label>
-                            <input type="file" class="form-control" name="gambar" id="egambar">
+                            <div class="custom-file">
+                                <input type="file" class="custom-file-input" id="egambar" name="gambar">
+                                <label class="custom-file-label" for="egambar" id="egambar-label">Pilih file</label>
+                            </div>
+                            <img src="" alt="" id="preview" class="mx-auto d-block pb-2" style="max-width: 200px; padding-top: 23px">
                         </div>
                         <div class="form-group">
                             <label for="description">Description</label>
-                            <input type="text" class="form-control" name="description" id="edescription"
+                            <input type="text" class="form-control" id="edescription" name="description"
                                 placeholder="Input Here">
                         </div>
+                    </form>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-danger" data-dismiss="modal">Close</button>
                     <button type="submit" class="btn btn-outline-primary">Update Data</button>
                 </div>
-                </form>
+               
             </div>
         </div>
     </div>
+
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js"
         integrity="sha512-pumBsjNRGGqkPzKHndZMaAG+bir374sORyzM3uulLV14lN5LyykqNk8eEeUlUkB3U0M4FApyaHraT65ihJhDpQ=="
@@ -158,6 +164,54 @@
                     $('#dataTable').DataTable().destroy();
                     $("#dataTable tbody").empty();
                     $("#dataTable tbody").append(tableBody);
+                    $(document).ready(function() {
+                        $.ajax({
+                            url: "{{ route('getData.bazar') }}",
+                            method: "GET",
+                            dataType: "json",
+                            success: function(response) {
+                                console.log(response);
+                                var tableBody = "";
+                                $.each(response.data, function(index, item) {
+                                    tableBody += "<tr>";
+                                    tableBody += "<td>" + (index + 1) +
+                                        "</td>";
+                                    tableBody += "<td>" + item.nama_menu +
+                                        "</td>";
+                                    tableBody += "<td>Rp. " + item.harga +
+                                        "</td>";
+                                    tableBody +=
+                                        "<td><img src='/uploads/menu/" +
+                                        item.gambar + "' alt='" +
+                                        item.nama_menu +
+                                        "' class='img-thumbnail' style='width: 200px'></td>";
+                                    tableBody += "<td>" + item.description +
+                                        "</td>";
+                                    tableBody += "<td>" +
+                                        "<button type='button' class='btn btn-primary edit-modal' data-toggle='modal' data-target='#EditModal' " +
+                                        "data-id='" + item.id + "' " +
+                                        "<i class='fa fa-edit'>Edit</i></button>" +
+                                        "<button type='button' class='btn btn-danger delete-confirm' data-id='" +
+                                        item.id +
+                                        "'><i class='fa fa-trash'></i></button>" +
+                                        "</td>";
+
+                                    tableBody += "</tr>";
+                                });
+                                $('#dataTable').DataTable().destroy();
+                                $("#dataTable tbody").empty();
+                                $("#dataTable tbody").append(tableBody);
+                                $('#dataTable').DataTable({
+                                    "paging": true,
+                                    "ordering": true,
+                                    "searching": true
+                                });
+                            },
+                            error: function() {
+                                console.log("Failed to get data from server");
+                            }
+                        });
+                    })
                     $('#dataTable').DataTable({
                         "paging": true,
                         "ordering": true,
@@ -225,57 +279,54 @@
         });
 
         // //edit
+        $(document).on('click', '.edit-modal', function() {
+            var id = $(this).data('id');
+            $.ajax({
+                url: "{{ route('editData.bazar', ':id') }}".replace(':id', id),
+                type: 'GET',
+                dataType: 'JSON',
+                success: function(data) {
+                    console.log(data);
+                    $('#id').val(data.data.id);
+                    $('#enama_menu').val(data.data.nama_menu);
+                    $('#eharga').val(data.data.harga);
+                    $('#preview').attr('src', "{{ asset('uploads/menu') }}/" + data.data.gambar);
+                    $('#edescription').val(data.data.description);
+                    $('#EditModal').modal('show');
+                },
+                error: function() {
+                    alert("error");
+                }
+            });
+        });
 
-        // $(document).on('click', '.edit-modal', function() {
-        //     $('#id').val($(this).data('id'));
-        //     $('#nama_menu').val($(this).data('nama_menu'));
-        //     $('#harga').val($(this).data('harga'));
-        //     $('#gambar').val($(this).data('gambar'));
-        //     $('#description').val($(this).data('description'));
-        //     $('#EditModal').val($(this).data('show'));
-        // })
 
 
-        // $(document).on('click', '.delete-confirm', function(event) {
-        //     event.preventDefault();
-        //     var id = $(this).data('id');
-        //     var row = $(this).closest('tr');
 
-        //     Swal.fire({
-        //         title: 'Apakah Anda yakin ingin menghapus data ini?',
-        //         text: "Data yang sudah dihapus tidak dapat dikembalikan!",
-        //         icon: 'warning',
-        //         showCancelButton: true,
-        //         confirmButtonColor: '#d33',
-        //         cancelButtonColor: '#3085d6',
-        //         confirmButtonText: 'Ya, hapus!',
-        //         cancelButtonText: 'Batal'
-        //     }).then((result) => {
-        //         if (result.isConfirmed) {
-        //             $.ajax({
-        //                 url: "{{ url('bazar/delete/') }}/" + id,
-        //                 method: "DELETE",
-        //                 data: {
-        //                     _token: '{{ csrf_token() }}'
-        //                 },
-        //                 dataType: "json",
-        //                 success: function(response) {
-        //                     console.log(response);
-        //                     if (response.success) {
-        //                         row.remove();
-        //                         Swal.fire(
-        //                             'Terhapus!',
-        //                             'Data sudah dihapus.',
-        //                             'success'
-        //                         );
-        //                     }
-        //                 },
-        //                 error: function() {
-        //                     console.log("Failed to delete data from server");
-        //                 }
-        //             });
+        // Update Data
+        // $('#formEdit').submit(function(e) {
+        //     e.preventDefault();
+        //     var id = $('#id').val();
+        //     var formData = new FormData(this);
+        //     $.ajax({
+        //         url: "route('updateData.bazar')",
+        //         type: "POST",
+        //         data: formData,
+        //         dataType: "JSON",
+        //         cache: false,
+        //         contentType: false,
+        //         processData: false,
+        //         success: function(data) {
+        //             $('#EditModal').modal('hide');
+        //             $('#dataTable').DataTable().ajax.reload();
+        //             alert('Data Updated Successfully');
+        //         },
+        //         error: function() {
+        //             alert("Error!");
         //         }
         //     });
         // });
+
+
     </script>
 @endsection
