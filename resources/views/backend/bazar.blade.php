@@ -164,54 +164,6 @@
                     $('#dataTable').DataTable().destroy();
                     $("#dataTable tbody").empty();
                     $("#dataTable tbody").append(tableBody);
-                    $(document).ready(function() {
-                        $.ajax({
-                            url: "{{ route('getData.bazar') }}",
-                            method: "GET",
-                            dataType: "json",
-                            success: function(response) {
-                                console.log(response);
-                                var tableBody = "";
-                                $.each(response.data, function(index, item) {
-                                    tableBody += "<tr>";
-                                    tableBody += "<td>" + (index + 1) +
-                                        "</td>";
-                                    tableBody += "<td>" + item.nama_menu +
-                                        "</td>";
-                                    tableBody += "<td>Rp. " + item.harga +
-                                        "</td>";
-                                    tableBody +=
-                                        "<td><img src='/uploads/menu/" +
-                                        item.gambar + "' alt='" +
-                                        item.nama_menu +
-                                        "' class='img-thumbnail' style='width: 200px'></td>";
-                                    tableBody += "<td>" + item.description +
-                                        "</td>";
-                                    tableBody += "<td>" +
-                                        "<button type='button' class='btn btn-primary edit-modal' data-toggle='modal' data-target='#EditModal' " +
-                                        "data-id='" + item.id + "' " +
-                                        "<i class='fa fa-edit'>Edit</i></button>" +
-                                        "<button type='button' class='btn btn-danger delete-confirm' data-id='" +
-                                        item.id +
-                                        "'><i class='fa fa-trash'></i></button>" +
-                                        "</td>";
-
-                                    tableBody += "</tr>";
-                                });
-                                $('#dataTable').DataTable().destroy();
-                                $("#dataTable tbody").empty();
-                                $("#dataTable tbody").append(tableBody);
-                                $('#dataTable').DataTable({
-                                    "paging": true,
-                                    "ordering": true,
-                                    "searching": true
-                                });
-                            },
-                            error: function() {
-                                console.log("Failed to get data from server");
-                            }
-                        });
-                    })
                     $('#dataTable').DataTable({
                         "paging": true,
                         "ordering": true,
@@ -222,7 +174,7 @@
                     console.log("Failed to get data from server");
                 }
             });
-        })
+        });
 
         $.ajaxSetup({
             headers: {
