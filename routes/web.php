@@ -14,5 +14,15 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/bazar', [BazarController::class, 'index']);
-Route::post('/bazar/create', [BazarController::class, 'store']);
+Route::get('/dashboard', function() {
+    return view('backend.bazar');
+});
+
+
+
+Route::get('/bazar', [BazarController::class, 'index'])->name('getData.bazar');
+Route::post('/bazar/create', [BazarController::class, 'store'])->name('tambahData.bazar');
+Route::get('/bazar/{id}', [BazarController::class, 'showById']);
+Route::put('/bazar/update/{id}', [BazarController::class, 'update']);
+Route::delete('/bazar/delete/{id}', [BazarController::class, 'delete'])->name('deleteData.bazar');
+

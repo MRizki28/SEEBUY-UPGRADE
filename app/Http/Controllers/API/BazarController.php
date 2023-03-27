@@ -7,6 +7,7 @@ use App\Models\BazarModel;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\File;
 
 class BazarController extends Controller
 {
@@ -18,7 +19,7 @@ class BazarController extends Controller
             'data' => $data
         ], Response::HTTP_OK);
 
-        return view('Data.bazar')->with('data', $data);
+        // return view('Data.bazar')->with('data', $data);
     }
 
     public function store(Request $request)
@@ -32,10 +33,6 @@ class BazarController extends Controller
 
 
         if ($validator->fails()) {
-            // $msg = $validator->errors()->first();
-            // Alert::error('Gagal', $msg);
-            // return redirect()->back();
-
             return response()->json([
                 'message' => 'failed',
                 'errors' => $validator->errors()
@@ -53,19 +50,16 @@ class BazarController extends Controller
                 $filename = $file->getClientOriginalName();
                 $file->move('uploads/menu/', $filename);
                 $data->gambar = $filename;
+                $data->description = $request->input('description');
             }
-            $data->gambar = $request->input('gambar');
-            $data->description = $request->input('description');
+
             $data->save();
         } catch (\Throwable $th) {
             return response()->json([
-                'message' => 'gagal',
+                'message' => 'gagal tambah data',
                 'errors' => $th->getMessage()
             ]);
         }
-
-
-
 
         return response()->json([
             'message' => 'success tambah data',
@@ -74,7 +68,82 @@ class BazarController extends Controller
                 'data' => $data
             ]
         ]);
-
-        return redirect()->back()->with('success', 'Data berhasil disimpan');
     }
+
+    public function showById($id)
+    {
+        $data = BazarModel::findOrfail($id);
+
+        return response()->json([
+            'message' => 'success get data by id',
+            'data' => $data
+        ], Response::HTTP_OK);
+    }
+
+    public function update(Request $request, $id)
+    {
+        $validator = Validator::make($request->all(), [
+            'nama_menu' => 'required',
+            'harga' => 'required',
+            'gambar' => 'required',
+            'description' => 'required'
+        ]);
+
+
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => 'check your validation',
+                'errors' => $validator->errors()
+            ]);
+        }
+
+
+        $validated = $validator->validated();
+
+
+        try {
+            $data = BazarModel::findOrfail($validated);
+            $data->nama_menu->input('nama_menu');
+            $data->harga->input('harga');
+            if ($request->hasfile('gambar')) {
+                $destination = 'uploads/menu/' . $data->gambar;
+                if (File::exists($destination)) {
+                    File::delete($destination);
+                }
+                $file = $request->file('gambar');   
+                $filename = $file->getClientOriginalName();
+                $file->move('uploads/menu/', $filename);
+                $data->gambar = $filename;
+            }
+            $data->description = $request->input('description');
+            $data->update();
+        } catch (\Throwable $th) {
+            return response()->json([
+                'message' => 'failed',
+                'code' => 402,
+                'errors' => $th->getMessage()
+
+            ]);
+        }
+
+        return response()->json([
+            'message' => 'success update ',
+            'data' => [
+                'id' => $data->id,
+                'data' => $data
+            ]
+            ],Response::HTTP_OK);
+    }
+
+    public function delete($id)
+    {
+        $data = BazarModel::findOrFail($id);
+        $data->delete();
+    
+        return response()->json([
+            'success' => true,
+            'message' => 'Data deleted successfully'
+        ]);
+    }
+    
 }
