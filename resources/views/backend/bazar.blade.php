@@ -254,84 +254,58 @@
         });
 
         $(document).ready(function() {
-    // Mengambil form tambah data
-    var formEdit = $('#formEdit');
+            // Mengambil form tambah data
+            var formEdit = $('#formEdit');
 
-    formEdit.on('submit', function(e) {
-        e.preventDefault();
+            formEdit.on('submit', function(e) {
+                e.preventDefault();
 
-        var id = $('#id').val();
-        var formData = new FormData(this);
-        
-        // Check jika file gambar kosong (tidak dipilih)
-        var file = $('#egambar')[0].files[0];
-        if (!file) {
-            formData.delete('gambar'); // Hapus data gambar yang kosong dari form data
-        }
-        
-        $.ajax({
-            type: "POST",
-            url: "/cms/bazar/update/" + id,
-            data: formData,
-            dataType: 'json',
-            contentType: false,
-            processData: false,
-            success: function(data) {
-                console.log(data);
-                Swal.fire({
-                    title: "Success",
-                    text: "Data berhasil Di Update",
-                    icon: "success",
-                    showCancelButton: false,
-                    confirmButtonText: "OK"
-                }).then(function() {
-                    location.reload();
+                var id = $('#id').val();
+                var formData = new FormData(this);
+
+                // Check jika file gambar kosong (tidak dipilih)
+                var file = $('#egambar')[0].files[0];
+                if (!file) {
+                    formData.delete('gambar'); // Hapus data gambar yang kosong dari form data
+                }
+
+                $.ajax({
+                    type: "POST",
+                    url: "{{ route('updateData.bazar', ':id') }}".replace(':id', id),
+                    data: formData,
+                    dataType: 'json',
+                    contentType: false,
+                    processData: false,
+                    success: function(data) {
+                        console.log(data);
+                        Swal.fire({
+                            title: "Success",
+                            text: "Data berhasil Di Update",
+                            icon: "success",
+                            showCancelButton: false,
+                            confirmButtonText: "OK"
+                        }).then(function() {
+                            location.reload();
+                        });
+                    },
+                    error: function(data) {
+                        var errors = data.responseJSON.errors;
+                        var errorMessage = "";
+
+                        $.each(errors, function(key, value) {
+                            errorMessage += value + "<br>";
+                        });
+
+                        Swal.fire({
+                            title: "Error",
+                            html: errorMessage,
+                            icon: "error",
+                            timer: 5000,
+                            showConfirmButton: true
+                        });
+                    }
                 });
-            },
-            error: function(data) {
-                var errors = data.responseJSON.errors;
-                var errorMessage = "";
-
-                $.each(errors, function(key, value) {
-                    errorMessage += value + "<br>";
-                });
-
-                Swal.fire({
-                    title: "Error",
-                    html: errorMessage,
-                    icon: "error",
-                    timer: 5000,
-                    showConfirmButton: true
-                });
-            }
-        });
-    });
-});
-
-
-
-        // Update Data
-        // $('#formEdit').submit(function(e) {
-        //     e.preventDefault();
-        //     var id = $('#id').val();
-        //     var formData = new FormData(this);
-        //     $.ajax({
-        //         url: "route('updateData.bazar')",
-        //         type: "POST",
-        //         data: formData,
-        //         dataType: "JSON",
-        //         cache: false,
-        //         contentType: false,
-        //         processData: false,
-        //         success: function(data) {
-        //             $('#EditModal').modal('hide');
-        //             $('#dataTable').DataTable().ajax.reload();
-        //             alert('Data Updated Successfully');
-        //         },
-        //         error: function() {
-        //             alert("Error!");
-        //         }
-        //     });
-        // });
+            });
+        })
     </script>
 @endsection
