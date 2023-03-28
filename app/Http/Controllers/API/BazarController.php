@@ -85,26 +85,23 @@ class BazarController extends Controller
         $validator = Validator::make($request->all(), [
             'nama_menu' => 'required',
             'harga' => 'required',
-            'gambar' => 'required',
+            'gambar' => '',
             'description' => 'required'
         ]);
-
-
+    
         if ($validator->fails()) {
             return response()->json([
                 'message' => 'check your validation',
                 'errors' => $validator->errors()
             ]);
         }
-
-
+    
         $validated = $validator->validated();
-
-
+    
         try {
-            $data = BazarModel::findOrfail($validated);
-            $data->nama_menu->input('nama_menu');
-            $data->harga->input('harga');
+            $data = BazarModel::findOrFail($request->id);
+            $data->nama_menu = $request->input('nama_menu');
+            $data->harga = $request->input('harga');
             if ($request->hasfile('gambar')) {
                 $destination = 'uploads/menu/' . $data->gambar;
                 if (File::exists($destination)) {
@@ -122,18 +119,19 @@ class BazarController extends Controller
                 'message' => 'failed',
                 'code' => 402,
                 'errors' => $th->getMessage()
-
+    
             ]);
         }
-
+    
         return response()->json([
             'message' => 'success update ',
             'data' => [
                 'id' => $data->id,
                 'data' => $data
             ]
-            ],Response::HTTP_OK);
+            ], Response::HTTP_OK);
     }
+    
 
     public function delete($id)
     {
