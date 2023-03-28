@@ -107,7 +107,8 @@
                                 <input type="file" class="custom-file-input" id="egambar" name="gambar">
                                 <label class="custom-file-label" for="egambar" id="egambar-label">Pilih file</label>
                             </div>
-                            <img src="" alt="" id="preview" class="mx-auto d-block pb-2" style="max-width: 200px; padding-top: 23px">
+                            <img src="" alt="" id="preview" class="mx-auto d-block pb-2"
+                                style="max-width: 200px; padding-top: 23px">
                         </div>
                         <div class="form-group">
                             <label for="description">Description</label>
@@ -118,9 +119,9 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-danger" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-outline-primary">Update Data</button>
+                    <button type="submit" form="formEdit" class="btn btn-outline-primary">Update Data</button>
                 </div>
-               
+
             </div>
         </div>
     </div>
@@ -252,6 +253,60 @@
             });
         });
 
+        $(document).ready(function() {
+    // Mengambil form tambah data
+    var formEdit = $('#formEdit');
+
+    formEdit.on('submit', function(e) {
+        e.preventDefault();
+
+        var id = $('#id').val();
+        var formData = new FormData(this);
+        
+        // Check jika file gambar kosong (tidak dipilih)
+        var file = $('#egambar')[0].files[0];
+        if (!file) {
+            formData.delete('gambar'); // Hapus data gambar yang kosong dari form data
+        }
+        
+        $.ajax({
+            type: "POST",
+            url: "/cms/bazar/update/" + id,
+            data: formData,
+            dataType: 'json',
+            contentType: false,
+            processData: false,
+            success: function(data) {
+                console.log(data);
+                Swal.fire({
+                    title: "Success",
+                    text: "Data berhasil Di Update",
+                    icon: "success",
+                    showCancelButton: false,
+                    confirmButtonText: "OK"
+                }).then(function() {
+                    location.reload();
+                });
+            },
+            error: function(data) {
+                var errors = data.responseJSON.errors;
+                var errorMessage = "";
+
+                $.each(errors, function(key, value) {
+                    errorMessage += value + "<br>";
+                });
+
+                Swal.fire({
+                    title: "Error",
+                    html: errorMessage,
+                    icon: "error",
+                    timer: 5000,
+                    showConfirmButton: true
+                });
+            }
+        });
+    });
+});
 
 
 
@@ -278,7 +333,5 @@
         //         }
         //     });
         // });
-
-
     </script>
 @endsection
