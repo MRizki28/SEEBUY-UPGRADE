@@ -88,16 +88,16 @@ class BazarController extends Controller
             'gambar' => '',
             'description' => 'required'
         ]);
-    
+
         if ($validator->fails()) {
             return response()->json([
                 'message' => 'check your validation',
                 'errors' => $validator->errors()
             ]);
         }
-    
+
         $validated = $validator->validated();
-    
+
         try {
             $data = BazarModel::findOrFail($request->id);
             $data->nama_menu = $request->input('nama_menu');
@@ -107,7 +107,7 @@ class BazarController extends Controller
                 if (File::exists($destination)) {
                     File::delete($destination);
                 }
-                $file = $request->file('gambar');   
+                $file = $request->file('gambar');
                 $filename = $file->getClientOriginalName();
                 $file->move('uploads/menu/', $filename);
                 $data->gambar = $filename;
@@ -119,29 +119,39 @@ class BazarController extends Controller
                 'message' => 'failed',
                 'code' => 402,
                 'errors' => $th->getMessage()
-    
+
             ]);
         }
-    
+
         return response()->json([
             'message' => 'success update ',
             'data' => [
                 'id' => $data->id,
                 'data' => $data
             ]
-            ], Response::HTTP_OK);
+        ], Response::HTTP_OK);
     }
-    
+
 
     public function delete($id)
     {
-        $data = BazarModel::findOrFail($id);
-        $data->delete();
-    
-        return response()->json([
-            'success' => true,
-            'message' => 'Data deleted successfully'
-        ]);
+        try {
+            $data = BazarModel::find($id);
+            $location = 'uploads/menu/' . $data->gambar;
+
+            BazarModel::whereId($id)->delete();
+            if ((File::exists($location))) {
+                File::delete($location);
+            }
+            return response()->json([
+                'message' => 'success delete data',
+
+            ], Response::HTTP_OK);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'message' => 'failed',
+                'errors' => $th->getMessage()
+            ], Response::HTTP_NOT_ACCEPTABLE);
+        }
     }
-    
 }
