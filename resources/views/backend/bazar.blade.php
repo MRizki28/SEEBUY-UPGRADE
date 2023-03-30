@@ -253,6 +253,7 @@
             });
         });
 
+        //update
         $(document).ready(function() {
             // Mengambil form tambah data
             var formEdit = $('#formEdit');
@@ -307,5 +308,48 @@
                 });
             });
         })
+
+        //delete
+        $(document).on('click', '.delete-confirm', function(e) {
+            e.preventDefault();
+            var id = $(this).data('id');
+            Swal.fire({
+                title: 'Apakah anda yakin ingin menghapus data ini ?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Ya, Hapus',
+                cancelButtonText: 'Batal',
+                resolveButton: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: "{{ route('deleteData.bazar', ['id' => ':id']) }}".replace(':id', id),
+                        type: 'DELETE',
+                        data: {
+                            "_token": "{{ csrf_token() }}",
+                            "id": id
+                        },
+                        success: function () { 
+                            Swal.fire({
+                                title: 'Data berhasil dihapus',
+                                icon: 'success',
+                                timer: 1500,
+                                showConfirmButton: false
+                            }).then((result) => {
+                                location.reload();
+                            });
+                         },
+                         error: function () { 
+                            Swal.fire({
+                                tite: 'Terjadi kesalahan ',
+                                icon: 'error',
+                                timer: 1500,
+                                showConfirmButton: false
+                            });
+                          }
+                    });
+                }
+            });
+        });
     </script>
 @endsection
