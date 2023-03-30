@@ -15,6 +15,8 @@ class VerifyCsrfToken extends Middleware
         '/cms/bazar/create',
         '/cms/bazar/update/*',
         '/cms/bazar/delete/*',
+        //auth
+        '/cms/register',
     ];
 
     
