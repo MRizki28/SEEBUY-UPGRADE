@@ -1,7 +1,9 @@
 <?php
 
 use App\Http\Controllers\API\BazarController;
+use App\Http\Controllers\AUTH\AuthController;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,14 +17,27 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+//     return $request->user();
+// });
+
+Route::group(['middleware' => ['auth:sanctum']], function () {
+    // Route::get('/profile', function(Request $request) {
+    //     return auth()->user();
+    // });
+
+
+    Route::get('cms/bazar', [BazarController::class, 'index']);
+    Route::post('cms/bazar/create', [BazarController::class, 'store']);
+    Route::get('cms/bazar/{id}', [BazarController::class, 'showById']);
+    Route::put('cms/bazar/update/{id}', [BazarController::class, 'update']);
+    Route::delete('cms/bazar/delete/{id}', [BazarController::class, 'delete']);
+
 });
 
 
 
-Route::get('cms/bazar', [BazarController::class, 'index'])->name('getData.bazar');
-Route::post('cms/bazar/create', [BazarController::class, 'store'])->name('tambahData.bazar');
-Route::get('cms/bazar/{id}', [BazarController::class, 'showById'])->name('editData.bazar');
-Route::put('cms/bazar/update/{id}', [BazarController::class, 'update'])->name('updateData.bazar');
-Route::delete('cms/bazar/delete/{id}', [BazarController::class, 'delete'])->name('deleteData.bazar');
+
+Route::post('/cms/register', [AuthController::class, 'register']);
+Route::post('/cms/login', [AuthController::class, 'login']);
+Route::post('/cms/verify-email/{email}', [AuthController::class, 'verifyEmail']);
