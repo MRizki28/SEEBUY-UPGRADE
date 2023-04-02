@@ -82,6 +82,8 @@ class AuthController extends Controller
     {
         $user = User::where('email', $request->email)->firstOrFail();
 
+
+
         if ($user->email_verified_at) {
             return response()->json([
                 'message' => 'Email already verified',
@@ -90,17 +92,18 @@ class AuthController extends Controller
         }
 
         $user->email_verified_at = now();
-        $user->save();
 
+        $user->save();
         return response()->json([
             'message' => 'Email verified successfully',
-            'code' => 200
+            'code' => 200,
+            'data' => $user
         ]);
     }
 
     private function sendVerificationEmail(User $user)
     {
-        $verificationUrl = url('/verify-email/' . $user->email);
+        $verificationUrl = url('cms/verify-email/' . $user->email);
 
         Mail::to($user->email)->send(new VerificationMail($verificationUrl));
 
@@ -109,6 +112,4 @@ class AuthController extends Controller
             'code' => 200
         ]);
     }
-
-
 }
