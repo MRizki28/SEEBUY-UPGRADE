@@ -133,6 +133,22 @@ class BazarController extends Controller
     }
 
 
+    public function getGambar($filename)
+    {
+        $path = public_path('uploads/menu/' . $filename);
+        if (file_exists($path)) {
+            $file = File::get($path);
+            $type = File::mimeType($path);
+            $response = new Response($file, 200);
+            $response->header("Content-Type", $type);
+            return $response;
+        } else {
+            return response()->json([
+                'message' => 'File tidak ditemukan'
+            ], Response::HTTP_NOT_FOUND);
+        }
+    }
+
     public function delete($id)
     {
         try {

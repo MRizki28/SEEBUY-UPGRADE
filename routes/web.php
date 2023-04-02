@@ -33,6 +33,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('cms/bazar/{id}', [BazarController::class, 'showById'])->name('editData.bazar');
     Route::put('cms/bazar/update/{id}', [BazarController::class, 'update'])->name('updateData.bazar');
     Route::delete('cms/bazar/delete/{id}', [BazarController::class, 'delete'])->name('deleteData.bazar');
+    Route::get('cms/gambar/{filename}', [BazarController::class, 'getGambar'])->name('getGambar');
 
 
 
