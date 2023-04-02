@@ -40,4 +40,4 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
 Route::post('/cms/register', [AuthController::class, 'register']);
 Route::post('/cms/login', [AuthController::class, 'login']);
-Route::post('/cms/verify-email/{email}', [AuthController::class, 'verifyEmail']);
+Route::get('/cms/verify-email/{email}', [AuthController::class, 'verifyEmail']);

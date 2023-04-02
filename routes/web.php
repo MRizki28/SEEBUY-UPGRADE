@@ -51,5 +51,5 @@ Route::get('/register', function () {
 //auth
 Route::post('/cms/register', [AuthController::class, 'register'])->name('registerAdmin.bazar');
 Route::post('/cms/login', [AuthController::class, 'login'])->name('loginAdmin.bazar');
-Route::post('/cms/verify-email/{email}', [AuthController::class, 'verifyEmail']);
+Route::get('/cms/verify-email/{email}', [AuthController::class, 'verifyEmail'])->name('verify.email');
 
