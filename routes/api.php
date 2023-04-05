@@ -27,16 +27,16 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     // });
 
 
-    Route::get('cms/bazar', [BazarController::class, 'index']);
-    Route::post('cms/bazar/create', [BazarController::class, 'store']);
-    Route::get('cms/bazar/{id}', [BazarController::class, 'showById']);
-    Route::put('cms/bazar/update/{id}', [BazarController::class, 'update']);
-    Route::delete('cms/bazar/delete/{id}', [BazarController::class, 'delete']);
-    Route::get('cms/gambar/{filename}', [BazarController::class, 'getGambar']);
+ 
 
 });
 
-
+Route::get('cms/bazar', [BazarController::class, 'index']);
+Route::post('cms/bazar/create', [BazarController::class, 'store']);
+Route::get('cms/bazar/{id}', [BazarController::class, 'showById']);
+Route::put('cms/bazar/update/{id}', [BazarController::class, 'update']);
+Route::delete('cms/bazar/delete/{id}', [BazarController::class, 'delete']);
+Route::get('cms/gambar/{filename}', [BazarController::class, 'getGambar']);
 
 Route::post('/cms/register', [AuthController::class, 'register']);
 Route::post('/cms/login', [AuthController::class, 'login']);

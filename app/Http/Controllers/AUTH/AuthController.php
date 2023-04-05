@@ -94,10 +94,11 @@ class AuthController extends Controller
         $user->email_verified_at = now();
 
         $user->save();
-        return response()->json([
-            'message' => 'Email verified successfully',
-            'code' => 200,
-            'data' => $user
+
+        return redirect('/')->with([
+            'success' => 'Email verified successfully',
+            'data' => $user,
+            'code' => 200
         ]);
     }
 
